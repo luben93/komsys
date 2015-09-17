@@ -1,13 +1,17 @@
 package com.company;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class Main {
 
     public static void main(String[] args) {
 	// write your code here
+
+        ArrayList<Socket> clients = new ArrayList<>();
         ServerSocket serverSocket = null;
 
         try {
@@ -25,10 +29,23 @@ public class Main {
         try {
             while(true) {//TODO inte while true, det är så internet dör
                 clientSocket = serverSocket.accept();
+                clients.add(clientSocket);
                 //init new thread
+
                 Server server=new Server(clientSocket);
-                Thread trad = new Thread(server);
-                trad.start();
+//                Thread trad = new Thread(server);
+                server.start();
+                server.setClient(clientSocket);
+                //*
+                if(clients.isEmpty()){
+                    System.out.println(" YEEE ");
+                    PrintWriter out = new PrintWriter(clients.get(clients.size()-1).getOutputStream(), true);
+                    out.println("BUSY");
+                    trad.join();
+                }
+                //*/
+                //trad.join();
+
                 //add shit to array
             }
         }
@@ -43,10 +60,11 @@ public class Main {
 
         } catch (IOException e) {
             e.printStackTrace();
-            System.out.println("bajs på dig");
         }
 
 
 
     }
+
+    //TODO: avsluta tråden
 }

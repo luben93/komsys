@@ -10,10 +10,10 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * Created by luben on 15-09-16.
  */
-public class Protocol {
+public  class Protocol {
     private Socket client;
 
-    public Protocol(Socket client) {
+    public  Protocol(Socket client) {
         this.client = client;
 
     }
@@ -37,6 +37,10 @@ public class Protocol {
             while (!input.equals("HELLO")) {
                 System.out.println("not hello");
                 out.println("You have to say HELLO to continue");
+                if (input.equals("he")){
+                    System.out.println("UOeuiopu");
+                    return -9;
+                }
                 if ((input = in.readLine()) == null) {
                     return -2;
                 }
@@ -100,5 +104,5 @@ public class Protocol {
             return  recSanityCheck(in,out,in.readLine());
         }
     }
-
+//TODO: avsluta socketen
 }

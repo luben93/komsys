@@ -5,17 +5,20 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketException;
 
-public class Server implements Runnable {
-    private Socket client = null;
-
-    public Server(Socket client)throws SocketException {
-
+public class Server extends Thread {
+    public void setClient(Socket client)throws SocketException  {
         this.client = client;
         client.setSoTimeout(20000);
+    }
+
+    private Socket client = null;
+    private Thread runningThread= null;
+    public Server() {
 
     }
 
-    public int startar() {
+
+    public synchronized int startar() {
         PrintWriter out=null;
         BufferedReader in=null;
         Protocol protocol=new Protocol(client);
@@ -43,5 +46,8 @@ public class Server implements Runnable {
 
 
         startar();
+        /*if(startar() == -9){
+            Thread.currentThread().interrupt();
+        }*/
     }
 }
