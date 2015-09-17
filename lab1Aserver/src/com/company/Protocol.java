@@ -15,7 +15,6 @@ public  class Protocol {
 
     public  Protocol(Socket client) {
         this.client = client;
-
     }
 
     public int game() {

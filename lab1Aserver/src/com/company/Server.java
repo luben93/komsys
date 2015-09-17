@@ -5,26 +5,22 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketException;
 
-public class Server extends Thread {
-    public void setClient(Socket client)throws SocketException  {
+public class Server implements Runnable {
+    private Socket client = null;
+
+    public Server(Socket client)throws SocketException {
+
         this.client = client;
         client.setSoTimeout(20000);
-    }
-
-    private Socket client = null;
-    private Thread runningThread= null;
-    public Server() {
 
     }
 
-
-    public synchronized int startar() {
+    public int startar() {
         PrintWriter out=null;
         BufferedReader in=null;
         Protocol protocol=new Protocol(client);
         System.out.println("Connection successful");
         System.out.println("Waiting for input.....");
-
         return protocol.game();
 
     }
@@ -44,10 +40,8 @@ public class Server extends Thread {
     @Override
     public void run() {
 
-
-        startar();
-        /*if(startar() == -9){
+        if(startar() == -9){
             Thread.currentThread().interrupt();
-        }*/
+        }
     }
 }

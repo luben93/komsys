@@ -4,9 +4,9 @@ import java.net.*;
 public class client {
 	
 	    public static void main(String[] args) throws IOException {
-//TODO Lägg till att när socket timeout sker på server sidan så ska även klienten stängas ner
+//TODO Lï¿½gg till att nï¿½r socket timeout sker pï¿½ server sidan sï¿½ ska ï¿½ven klienten stï¿½ngas ner
 	    	
-	        String serverHostname = "130.229.186.57";
+	        String serverHostname = "localhost";
 	        int port = 1234;
 
 	        Socket echoSocket = null; PrintWriter out = null; BufferedReader in = null;

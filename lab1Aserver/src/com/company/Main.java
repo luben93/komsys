@@ -33,17 +33,16 @@ public class Main {
                 //init new thread
 
                 Server server=new Server(clientSocket);
-//                Thread trad = new Thread(server);
-                server.start();
-                server.setClient(clientSocket);
-                //*
-                if(clients.isEmpty()){
+                Thread trad = new Thread(server);
+                trad.start();
+
+                /*if(clients.size()>1){
                     System.out.println(" YEEE ");
                     PrintWriter out = new PrintWriter(clients.get(clients.size()-1).getOutputStream(), true);
                     out.println("BUSY");
                     trad.join();
                 }
-                //*/
+                */
                 //trad.join();
 
                 //add shit to array
