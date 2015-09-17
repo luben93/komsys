@@ -11,7 +11,7 @@ public class Server implements Runnable {
     public Server(Socket client)throws SocketException {
 
         this.client = client;
-        client.setSoTimeout(10000);
+        client.setSoTimeout(20000);
 
     }
 

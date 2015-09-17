@@ -21,7 +21,7 @@ public class Protocol {
     public int game() {
         PrintWriter out = null;
         BufferedReader in = null;
-
+        System.out.println("hej protokoll");
         try {
             out = new PrintWriter(client.getOutputStream(), true);
 
@@ -32,37 +32,60 @@ public class Protocol {
             if ((input = in.readLine()) == null) {
                 return -1;
             }
+            System.out.println(input);
 
             while (!input.equals("HELLO")) {
-                System.out.println("someone said hello");
-                out.print("You have to say HELLO to continue");
+                System.out.println("not hello");
+                out.println("You have to say HELLO to continue");
                 if ((input = in.readLine()) == null) {
                     return -2;
                 }
             }
-            out.print("OK");
+            out.println("OK");
+            if ((input = in.readLine()) == null) {
+                return -2;
+            }
+            System.out.println("okej");
+            System.out.println(out);
 
             while (!input.equals("START")) {
-                out.print("You have to say START to continue");
+                out.println("You have to say START to continue");
                 if ((input = in.readLine()) == null) {
-                    return -2;
+                    return -3;
                 }
             }
             int randig=ThreadLocalRandom.current().nextInt(0,100);
-            out.print("READY");
+            System.out.println(randig);
+            out.println("READY");
 
 
             while ((input = in.readLine()) != null) {
+                try{
+                String check_guess = input.substring(0, 4);
+                }catch (StringIndexOutOfBoundsException e){
+                    out.println("You have to write GUESS x");
+                }
 
-                int guess=Integer.parseInt(input.substring(6));
+                    String check_space = input.substring(5);
+                    if(!check_space.equals(" ")){
+                        out.println("You have to write GUESS x");
+                    }
+
+                int guess =0;
+                try{
+                     guess=Integer.parseInt(input.substring(6));
+
+                }catch (NumberFormatException e){
+                    out.println("You have to write GUESS number");
+                }
 
                 if(guess == randig){
-                    out.print("You have guessed correct");
+                    out.println("You have guessed correct");
                     return 0;
                 }else if(guess <randig){
-                    out.print("LOW");
+                    out.println("LOW");
                 }else if(guess >randig){
-                    out.print("HIGH");
+                    out.println("HIGH");
 
                 }
 
@@ -77,7 +100,44 @@ public class Protocol {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return -3;
+        return -4;
+    }
+
+    private int recSanityCheck(BufferedReader in,PrintWriter out,String input ) throws IOException ,NullPointerException{
+
+        try{
+            String check_guess = input.substring(0, 4);
+        }catch (StringIndexOutOfBoundsException e){
+            out.println("You have to write GUESS x");
+            if ((input = in.readLine()) == null) {
+                throw new NullPointerException("end of stream");
+            }
+            return  recSanityCheck(in,out,input);
+
+        }
+
+        String check_space = input.substring(5);
+        if(!check_space.equals(" ")){
+            out.println("You have to write GUESS x");
+            if ((input = in.readLine()) == null) {
+                throw new NullPointerException("end of stream");
+            }
+            return  recSanityCheck(in,out,input);
+
+        }
+
+        int guess =0;
+        try{
+            guess=Integer.parseInt(input.substring(6));
+
+        }catch (NumberFormatException e){
+            out.println("You have to write GUESS number");
+            if ((input = in.readLine()) == null) {
+                throw new NullPointerException("end of stream");
+            }
+            return  recSanityCheck(in,out,input);
+        }
+        return guess;
     }
 
 }
