@@ -45,8 +45,7 @@ public class Protocol {
             if ((input = in.readLine()) == null) {
                 return -2;
             }
-            System.out.println("okej");
-            System.out.println(out);
+
 
             while (!input.equals("START")) {
                 out.println("You have to say START to continue");
@@ -88,36 +87,18 @@ public class Protocol {
 
     private int recSanityCheck(BufferedReader in,PrintWriter out,String input ) throws IOException ,NullPointerException{
         int guess = -1;
-        System.out.println("new recursion");
         try{
-            System.out.println("Part 1: " + input);
-            String check_guess = input.substring(0, 5);
-            System.out.println("Part 2: " + check_guess);
-            String check_space = input.substring(6);
-            System.out.println("Part 3: " + check_space);
-            if(!check_space.equals(" ")){
-                System.out.println("Part 4: " + "else not space");
-              throw new StringIndexOutOfBoundsException();
-            }else{
-                System.out.println("Part 5: " + "else");
-                guess=Integer.parseInt(input.substring(7));
+            if(!input.substring(0, 6).equals("GUESS ")){
+                throw new StringIndexOutOfBoundsException();
+            }
+                guess=Integer.parseInt(input.substring(6));
                 System.out.println("Part 6: " + guess);
                 return guess;
-            }
-
 
         }catch (StringIndexOutOfBoundsException | NumberFormatException e1){
             out.println("You have to write GUESS x");
-            System.out.println("Part 7: " + "recursive before line");
-
-         /*   if ((input = in.readLine()) == null) {
-                throw new NullPointerException("end of stream");
-            }*/
-            System.out.println("Part 8: " + "recursive catch");
             return  recSanityCheck(in,out,in.readLine());
-
         }
-
     }
 
 }
