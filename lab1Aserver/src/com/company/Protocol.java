@@ -60,24 +60,7 @@ public class Protocol {
 
 
             while ((input = in.readLine()) != null) {
-                try{
-                String check_guess = input.substring(0, 4);
-                }catch (StringIndexOutOfBoundsException e){
-                    out.println("You have to write GUESS x");
-                }
-
-                    String check_space = input.substring(5);
-                    if(!check_space.equals(" ")){
-                        out.println("You have to write GUESS x");
-                    }
-
-                int guess =0;
-                try{
-                     guess=Integer.parseInt(input.substring(6));
-
-                }catch (NumberFormatException e){
-                    out.println("You have to write GUESS number");
-                }
+               int guess = recSanityCheck(in,out,input);
 
                 if(guess == randig){
                     out.println("You have guessed correct");
@@ -104,40 +87,26 @@ public class Protocol {
     }
 
     private int recSanityCheck(BufferedReader in,PrintWriter out,String input ) throws IOException ,NullPointerException{
-
+        int guess = -1;
+        System.out.println("new recursion");
         try{
             String check_guess = input.substring(0, 4);
-        }catch (StringIndexOutOfBoundsException e){
-            out.println("You have to write GUESS x");
-            if ((input = in.readLine()) == null) {
-                throw new NullPointerException("end of stream");
+            String check_space = input.substring(5);
+            if(!check_space.equals(" ")){
+              throw new StringIndexOutOfBoundsException();
             }
-            return  recSanityCheck(in,out,input);
-
-        }
-
-        String check_space = input.substring(5);
-        if(!check_space.equals(" ")){
-            out.println("You have to write GUESS x");
-            if ((input = in.readLine()) == null) {
-                throw new NullPointerException("end of stream");
-            }
-            return  recSanityCheck(in,out,input);
-
-        }
-
-        int guess =0;
-        try{
             guess=Integer.parseInt(input.substring(6));
+            return guess;
 
-        }catch (NumberFormatException e){
-            out.println("You have to write GUESS number");
+        }catch (StringIndexOutOfBoundsException | NumberFormatException e1){
+            out.println("You have to write GUESS x");
             if ((input = in.readLine()) == null) {
                 throw new NullPointerException("end of stream");
             }
             return  recSanityCheck(in,out,input);
+
         }
-        return guess;
+
     }
 
 }
