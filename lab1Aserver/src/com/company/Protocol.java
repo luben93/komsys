@@ -90,20 +90,31 @@ public class Protocol {
         int guess = -1;
         System.out.println("new recursion");
         try{
-            String check_guess = input.substring(0, 4);
-            String check_space = input.substring(5);
+            System.out.println("Part 1: " + input);
+            String check_guess = input.substring(0, 5);
+            System.out.println("Part 2: " + check_guess);
+            String check_space = input.substring(6);
+            System.out.println("Part 3: " + check_space);
             if(!check_space.equals(" ")){
+                System.out.println("Part 4: " + "else not space");
               throw new StringIndexOutOfBoundsException();
+            }else{
+                System.out.println("Part 5: " + "else");
+                guess=Integer.parseInt(input.substring(7));
+                System.out.println("Part 6: " + guess);
+                return guess;
             }
-            guess=Integer.parseInt(input.substring(6));
-            return guess;
+
 
         }catch (StringIndexOutOfBoundsException | NumberFormatException e1){
             out.println("You have to write GUESS x");
-            if ((input = in.readLine()) == null) {
+            System.out.println("Part 7: " + "recursive before line");
+
+         /*   if ((input = in.readLine()) == null) {
                 throw new NullPointerException("end of stream");
-            }
-            return  recSanityCheck(in,out,input);
+            }*/
+            System.out.println("Part 8: " + "recursive catch");
+            return  recSanityCheck(in,out,in.readLine());
 
         }
 
