@@ -60,7 +60,7 @@ public class Main {
                 message = new String(packet.getData(), 0, packet.getLength());
 
                 System.out.println("Packet received from " + packet.getAddress().getHostName());
-                System.out.println("Packet contained:" + message+":");
+                System.out.println("Packet contained:" + message+":");//TODO remove last char in message, its a fucking \n
                 if (packet.getAddress().equals( clientAddr)) {
                     // Print information
                     System.out.println("is equalt");
