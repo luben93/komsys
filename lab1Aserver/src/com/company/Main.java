@@ -9,16 +9,17 @@ public class Main {
 
     public static void main(String[] args) {
 	// write your code here
+        int port=1234;
 
         ArrayList<Socket> clients = new ArrayList<>();
         ServerSocket serverSocket = null;
 
         try {
-            serverSocket = new ServerSocket(1234);
+            serverSocket = new ServerSocket(port);
         }
         catch (IOException e)
         {
-            System.err.println("Could not listen on port: " + 1234);
+            System.err.println("Could not listen on port: " + port);
             System.exit(1);
         }
 
