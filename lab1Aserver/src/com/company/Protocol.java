@@ -20,7 +20,6 @@ public  class Protocol {
     public int game() {
         PrintWriter out = null;
         BufferedReader in = null;
-        System.out.println("hej protokoll");
         try {
             out = new PrintWriter(client.getOutputStream(), true);
 
