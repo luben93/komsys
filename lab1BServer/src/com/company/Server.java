@@ -16,23 +16,23 @@ import java.util.ArrayList;
  * Created by Julia on 2015-09-21.
  */
 public class Server {
-    static ArrayList<Client> clients = new ArrayList<>();
+    static ArrayList<Client> clients = new ArrayList<Client>();
 
-    public Server() {
+    public Server(int port) {
         try {
-            server();
+            server(port);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void server() throws IOException {
+    public void server(int port) throws IOException {
         ServerSocket serverSocket = null;
 
         try {
-            serverSocket = new ServerSocket(1234);
+            serverSocket = new ServerSocket(port);
         } catch (IOException e) {
-            System.err.println("Could not listen on port: " + 1234);
+            System.err.println("Could not listen on port: " + port);
             System.exit(1);
         }
 
