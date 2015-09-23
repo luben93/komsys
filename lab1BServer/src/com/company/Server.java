@@ -137,6 +137,8 @@ monitor?
                     if ((input = in.readLine()) != null) {
                         if (input.startsWith("/")) {
                             if (input.equals("/quit")) {
+                                client.getOut().print("exit"+"\n\r");
+                                client.getOut().flush();
                                 input = "has leaved the chat room";
                                 s.sendToAll(input, client);
                                 break;
@@ -172,7 +174,6 @@ monitor?
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
-                System.out.println(" YEEEEE ddddd");
                 try {
                     if (in != null) in.close();
                     if (out != null) out.close();

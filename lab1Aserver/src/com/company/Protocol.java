@@ -26,7 +26,7 @@ public  class Protocol {
             randig= ThreadLocalRandom.current().nextInt(0,100);
             System.out.println("randig="+randig);
             out= "READY";
-        }else if(sentOk&&sentReady){//GUESS TODO contains?????
+        }else if(sentOk&&sentReady){
             int guess=-1;
             try{
                 if(message.startsWith("GUESS ")){

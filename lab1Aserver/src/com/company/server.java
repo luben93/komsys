@@ -29,7 +29,7 @@ public class Server {
             String message = new String(packet.getData(), 0, packet.getLength());
             clients.add(packet.getAddress());
             send(p.game(message), clients.peek(), packet.getPort());
-            while (true) {//TODO inte while true, det är så internet dör
+            while (true) {
                 try {
                 serverSocket.receive(packet);
                 message = new String(packet.getData(), 0, packet.getLength());
