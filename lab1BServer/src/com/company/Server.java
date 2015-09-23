@@ -45,7 +45,7 @@ public class Server {
                 PrintWriter out = new PrintWriter(
                         clientSocket.getOutputStream());
                 synchronized (clients) {
-                    clients.add(new Client(out, clientSocket, ""));
+                    clients.add(new Client(out, clientSocket, clientSocket.getInetAddress().getHostName()));
                 }
 
                 ClientHandler ch = new ClientHandler(clients.get(clients.size() - 1), this);
@@ -66,19 +66,12 @@ public class Server {
     }
 
     private synchronized void sendToAll(String msg, Client client) {
-        /*
-        A thread iterating through the list (sending)
-must not be interrupted by other threads
-sending, adding or removing streams/handlers
-to the list. We need o synchronize code –
-monitor?
 
-         */
         if (msg.equals("/who")) {
             StringBuilder sb = new StringBuilder(100);
             for (int i = 0; i < clients.size(); i++) {
                 if (!clients.get(i).getSock().equals(client)) {
-                    sb.append(clients.get(i).getSock().getInetAddress().getHostName() + " , ");
+                    sb.append(clients.get(i).getNickname() + " , ");
                 }
             }
             msg = sb.toString();
@@ -93,13 +86,7 @@ monitor?
                 try {
                     for (int i = 0; i < clients.size(); i++) {
                         if (!clients.get(i).getOut().equals(client.getOut())) {
-                            String hostname = null;
-                            if (client.getNickname() != null && !client.getNickname().equals("")) {
-                                hostname = client.getNickname();
-                            } else {
-                                hostname = client.getSock().getInetAddress().getHostName();
-                            }
-                            clients.get(i).getOut().print(hostname + " wrote : " + msg + "\n\r");
+                            clients.get(i).getOut().print(client.getNickname() + " wrote : " + msg + "\n\r");
                             clients.get(i).getOut().flush(); // !
                         }
                     }
@@ -137,11 +124,13 @@ monitor?
                     if ((input = in.readLine()) != null) {
                         if (input.startsWith("/")) {
                             if (input.equals("/quit")) {
-                                client.getOut().print("exit"+"\n\r");
+                                client.getOut().print("exit" + "\n\r");
                                 client.getOut().flush();
                                 input = "has leaved the chat room";
                                 s.sendToAll(input, client);
                                 break;
+                            }else if(input.equals("/who")){
+                                sendToAll(input,client);
                             } else if (input.equals("/help")) {
                                 String msg = "1. /quit 2. /who 3. /nick <nickname> 4. /help";
                                 try {
