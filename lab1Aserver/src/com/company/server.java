@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketTimeoutException;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
@@ -23,44 +24,49 @@ public class Server {
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
         LinkedList<InetAddress> clients = new LinkedList<>();
         Protocol p = new Protocol();
-        serverSocket.receive(packet);
-        String message = new String(packet.getData(), 0, packet.getLength());
-        clients.add(packet.getAddress());
-        send(p.game(message), clients.peek(), packet.getPort());
-        while (true) {//TODO inte while true, det är så internet dör
 
             serverSocket.receive(packet);
-            message = new String(packet.getData(), 0, packet.getLength());
+            String message = new String(packet.getData(), 0, packet.getLength());
+            clients.add(packet.getAddress());
+            send(p.game(message), clients.peek(), packet.getPort());
+            while (true) {//TODO inte while true, det är så internet dör
+                try {
+                serverSocket.receive(packet);
+                message = new String(packet.getData(), 0, packet.getLength());
 
-            System.out.println("Packet from: " + packet.getAddress().getHostName() + ":" + packet.getPort() + " contained:" + message + ":");//TODO remove last char in message, its a fucking \n
-            System.out.println("peek is ====="+clients.peek());
-            if (packet.getAddress().equals(clients.peek())) { // Print information
-                String out = p.game(message);
-                InetAddress addr=clients.peek();
-                if (out.equals("DONE")) {
-                    System.out.println("update currentclietn");
-                    p = new Protocol();
-                    out = "You have guessed correct\n" +
-                            " the game has now ended\n" +
-                            " if want to play again you have to stand last in line";
-                    addr=clients.pop();
+                System.out.println("Packet from: " + packet.getAddress().getHostName() + ":" + packet.getPort() + " contained:" + message + ":");//TODO remove last char in message, its a fucking \n
+                if (packet.getAddress().equals(clients.peek())) { // Print information
+                    String out = p.game(message);
+                    InetAddress addr = clients.peek();
+                    if (out.equals("DONE")) {
+                        p = new Protocol();
+                        out = "You have guessed correct\n" +
+                                " the game has now ended\n" +
+                                " if want to play again you have to stand last in line";
+                        addr = clients.pop();
+                    }
+                    send(out, addr, packet.getPort()); //start protocol
+                } else {
+
+                    send("BUSY", packet.getAddress(), packet.getPort());
+                    if (!clients.contains(packet.getAddress())) {
+                        clients.add(packet.getAddress());
+                    }
                 }
-                send(out, addr, packet.getPort()); //start protocol
-            } else {
-
-                send("BUSY", packet.getAddress(), packet.getPort());
-                if (!clients.contains(packet.getAddress())) {
-                    System.out.println("added");
-                    clients.add(packet.getAddress());
+                }catch (SocketTimeoutException timeout){
+                    timeout.printStackTrace();
+                    clients.pop();
+                    p=new Protocol();
                 }
             }
-        }
+
     }
 
     public Server(int port) {
         this.port = port;
         try {
             serverSocket = new DatagramSocket(port);
+            serverSocket.setSoTimeout(20000);
         } catch (IOException e) {
             System.err.println("Could not listen on port: " + port);
             System.exit(1);

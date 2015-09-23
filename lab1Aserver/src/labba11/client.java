@@ -52,6 +52,7 @@ public class client {
 		while (true) {
             BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
             DatagramSocket clientSocket = new DatagramSocket();
+			clientSocket.setSoTimeout(2000);
             InetAddress IPAddress = InetAddress.getByName(ip);
 			byte[] sendData = new byte[1024];
             byte[] receiveData = new byte[1024];
