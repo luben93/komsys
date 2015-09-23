@@ -45,21 +45,25 @@ public class client {
 		  
 		out.close(); in.close(); stdIn.close(); echoSocket.close();
 		*/
+		String ip="130.229.182.139";
+		ip="localhost";
+		System.out.println("ip: "+ip);
 
-        while (true) {
+		while (true) {
             BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
             DatagramSocket clientSocket = new DatagramSocket();
-            InetAddress IPAddress = InetAddress.getByName("localhost");
-            byte[] sendData = new byte[1024];
+            InetAddress IPAddress = InetAddress.getByName(ip);
+			byte[] sendData = new byte[1024];
             byte[] receiveData = new byte[1024];
-            String sentence = inFromUser.readLine();
+			System.out.print(">");
+			String sentence = inFromUser.readLine();
             sendData = sentence.getBytes();
             DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, 1234);
-            clientSocket.send(sendPacket);
+			clientSocket.send(sendPacket);
             DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
             clientSocket.receive(receivePacket);
             String modifiedSentence = new String(receivePacket.getData());
-            System.out.println("FROM SERVER:" + modifiedSentence);
+            System.out.println("<" + modifiedSentence);
             clientSocket.close();
         }
     }
