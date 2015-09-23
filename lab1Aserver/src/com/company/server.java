@@ -5,6 +5,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.LinkedList;
+import java.util.NoSuchElementException;
 
 /**
  * Created by luben on 15-09-23.
@@ -16,55 +17,72 @@ public class Server {
     // ArrayList<Socket> clients = new ArrayList<>();
     private DatagramSocket serverSocket = null;
 
-    public void serve() {
+    public void serve() throws IOException, NoSuchElementException {
         // write your code here
 
         //Socket clientSocket = null;
         System.out.println("Waiting for connection.....");
-        try {
+        //try {
 
-            byte[] buffer = new byte[bufferSize];
-            DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+        byte[] buffer = new byte[bufferSize];
+        DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+        //ArrayList<InetAddress> clients = new ArrayList<>();
+        LinkedList<InetAddress> clients = new LinkedList<>();
+        Protocol p = new Protocol();
+        serverSocket.receive(packet);
+        String message = new String(packet.getData(), 0, packet.getLength());
+        InetAddress clientAddr = packet.getAddress();
+        send(p.game(message), clientAddr, packet.getPort());
+        while (true) {//TODO inte while true, det är så internet dör
+
+            //    try{
             serverSocket.receive(packet);
-            String message = new String(packet.getData(), 0, packet.getLength());
-
-            InetAddress clientAddr = packet.getAddress();// Print information
-            System.out.println("Packet received from " + clientAddr.getHostName());
-            System.out.println("Packet contained: " + message);
-            byte[] FbufOut = "oh hai\n i will be your server today\n if i am am busy, i will tell you\n to play send\n HELLO and then\n START and then\n GUESS X where X is your guess number.".getBytes();
-            DatagramPacket Fout = new DatagramPacket(FbufOut, FbufOut.length, clientAddr, packet.getPort());
-            serverSocket.send(Fout);
-            buffer = new byte[bufferSize];
-            packet = new DatagramPacket(buffer, buffer.length);
-            LinkedList<InetAddress> clients = new LinkedList<>();
-            Protocol p = new Protocol();
-
-            while (true) {//TODO inte while true, det är så internet dör
+            message = new String(packet.getData(), 0, packet.getLength());
+//                if (clientAddr== null){
+//                    clients.add(clientAddr);
+//                    clientAddr = packet.getAddress();
+//
+//                }
 
 
-                serverSocket.receive(packet);
-                message = new String(packet.getData(), 0, packet.getLength());
+            System.out.println("Packet from: " + packet.getAddress().getHostName() + ":" + packet.getPort() + " contained:" + message + ":");//TODO remove last char in message, its a fucking \n
+            if (packet.getAddress().equals(clientAddr)) { // Print information
+                String out = p.game(message);
+                InetAddress old = clientAddr;
+                if (out.equals("DONE")) {
+                    System.out.println("update currentclietn");
+//                    if (clients.size() == 1) {
+//                        clients.pop();
+//                        clientAddr = null;
+//                    }
+                    clientAddr=clients.pop();//TODO nullpointer after last ???
+                    p = new Protocol();
+                    out = "You have guessed correct\n" +
+                            " the game has now ended\n" +
+                            " if want to play again you have to stand last in line";
+                }
+                send(out, old, packet.getPort()); //start protocol
+            } else {
 
-                System.out.println("Packet received from " + packet.getAddress().getHostName() + ":" + packet.getPort());
-                System.out.println("Packet contained:" + message + ":");//TODO remove last char in message, its a fucking \n
-                if (packet.getAddress().equals(clientAddr)) { // Print information
-                    send(p.game(message), clientAddr, packet.getPort()); //start protocol
-                    System.out.println("is equalt");
-                } else {
-                    System.out.println("is not eqaul");
-                    send("BUSY", packet.getAddress(), packet.getPort());
-                    //  clients.push(packet.getAddress());
-                    System.out.println("sent busy");
+                send("BUSY", packet.getAddress(), packet.getPort());
+                if (!clients.contains(packet.getAddress())) {
+                    System.out.println("added");
+                    clients.add(packet.getAddress());
                 }
             }
-        } catch (IOException e) {
-            System.err.println("Accept failed.");
-            System.exit(1);
-        } finally {
-            serverSocket.close();
-            System.out.println("UDPServer done.");
+            //}catch(NoSuchElementException e) {
+            // JUST RESTART LOOP OF DOOM
+            // }
+
         }
-        System.exit(0);
+//        } catch (IOException e) {
+//            System.err.println("Accept failed.");
+//            System.exit(1);
+//        } finally {
+//            serverSocket.close();
+//            System.out.println("UDPServer done.");
+//        }
+        // System.exit(0);
     }
 
     public Server(int port) {
