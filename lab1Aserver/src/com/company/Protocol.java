@@ -21,18 +21,19 @@ public  class Protocol {
         if(message.equals("HELLO")&&!sentOk&&!sentReady){//HELLO
             sentOk=true;
             out= "OK";
-        }else if(message.equals("HELLO")&&sentOk&&!sentReady){//START
+        }else if(message.equals("START")&&sentOk&&!sentReady){//START
             sentReady=true;
             randig= ThreadLocalRandom.current().nextInt(0,100);
-            out= "START";
+            System.out.println("randig="+randig);
+            out= "READY";
         }else if(sentOk&&sentReady){//GUESS TODO contains?????
             int guess=-1;
             try{
                 if(message.startsWith("GUESS ")){
                         guess=Integer.parseInt(message.substring(6));
-                        System.out.println("Part 6: " + guess);
                     if(guess == randig){
-                        out=("You have guessed correct");
+                        out=("DONE");
+                        System.out.println("ALL done");
                     }else if(guess <randig){
                         out=("LOW");
                     }else if(guess >randig){
@@ -48,6 +49,7 @@ public  class Protocol {
         }else{//else
             out= "NOPE";
         }
+        System.out.println("out=["+out+"]");
         return out;
     }
 
