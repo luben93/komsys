@@ -44,17 +44,7 @@ public class Main {
             int randig= ThreadLocalRandom.current().nextInt(0,100);
 
             while (true) {//TODO inte while true, det är så internet dör
-/*
-                clientSocket = serverSocket.accept();
-                clients.add(clientSocket);
-                clientSocket.setSoTimeout(20000);
 
-                //init new thread
-                Protocol protocol=new Protocol(clientSocket);
-                System.out.println("Connection successful");
-                System.out.println("Waiting for input.....");
-                protocol.game();
-*/
 
                 serverSocket.receive(packet);
                 message = new String(packet.getData(), 0, packet.getLength());
