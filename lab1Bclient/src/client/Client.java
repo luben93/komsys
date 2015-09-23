@@ -8,9 +8,7 @@ import java.util.ArrayList;
 public class Client {
 
     public static void main(String[] args) throws IOException {
-//TODO L�gg till att n�r socket timeout sker p� server sidan s� ska �ven klienten st�ngas ner
-
-        String serverHostname = "localhost";
+        String serverHostname = "130.229.184.65";
         int port = 1234;
 
         Socket echoSocket = null;
@@ -36,12 +34,10 @@ public class Client {
 
             while (out!=null) {
                 if ((userInput = stdIn.readLine()) != null) {
-                    System.out.println(out + " dd " + echoSocket.isConnected());
                     out.println(userInput);
                     System.out.print("> ");
                 }
             }
-            System.out.println("B AAAAAJSS");
         } catch (UnknownHostException e) {
             System.err.println("Don't know about host: " + serverHostname);
             System.exit(1);
@@ -68,11 +64,14 @@ public class Client {
         @Override
         public void run() {
             String server_msg;
-
             while (true) {
                 try {
                     if ((server_msg = in.readLine()) != null && !server_msg.equals("")) {
                         System.out.println("echo: " + server_msg);
+                        if(server_msg.equals("exit")){
+                            System.out.println("Closing client...");
+                            System.exit(0);
+                        }
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
