@@ -1,107 +1,58 @@
 package com.company;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by luben on 15-09-16.
  */
 public  class Protocol {
-    private Socket client;
+    private boolean sentOk=false;
+    private boolean sentReady=false;
+    private int randig=-1;
 
-    public  Protocol(Socket client) {
-        this.client = client;
+    public  Protocol() {
+
+
     }
 
-    public int game() {
-        PrintWriter out = null;
-        BufferedReader in = null;
-        System.out.println("hej protokoll");
-        try {
-            out = new PrintWriter(client.getOutputStream(), true);
+    public String game(String message) {
 
-            in = new BufferedReader(
-                    new InputStreamReader(client.getInputStream()));
+        String out="YOU MUST CONSTRUCT ADDITIONAL PYLONS";
+        if(message.equals("HELLO")&&!sentOk&&!sentReady){//HELLO
+            sentOk=true;
+            out= "OK";
+        }else if(message.equals("START")&&sentOk&&!sentReady){//START
+            sentReady=true;
+            randig= ThreadLocalRandom.current().nextInt(0,100);
+            System.out.println("randig="+randig);
+            out= "READY";
+        }else if(sentOk&&sentReady){
+            int guess=-1;
+            try{
+                if(message.startsWith("GUESS ")){
+                        guess=Integer.parseInt(message.substring(6));
+                    if(guess == randig){
+                        out=("DONE");
+                        System.out.println("ALL done");
+                    }else if(guess <randig){
+                        out=("LOW");
+                    }else if(guess >randig){
+                        out=("HIGH");
 
-            String input;
-            if ((input = in.readLine()) == null) {
-                return -1;
-            }
-            System.out.println(input);
-
-            while (!input.equals("HELLO")) {
-                System.out.println("not hello");
-                out.println("You have to say HELLO to continue");
-                if (input.equals("he")){
-                    System.out.println("UOeuiopu");
-                    return -9;
+                    }
+                }else{
+                    throw new NumberFormatException("no guess");
                 }
-                if ((input = in.readLine()) == null) {
-                    return -2;
-                }
+            }catch ( NumberFormatException e1){
+                out= "NOPE write \nGUESS X \nwhere x is your guess";
             }
-            out.println("OK");
-            if ((input = in.readLine()) == null) {
-                return -2;
-            }
-
-
-            while (!input.equals("START")) {
-                out.println("You have to say START to continue");
-                if ((input = in.readLine()) == null) {
-                    return -3;
-                }
-            }
-            int randig=ThreadLocalRandom.current().nextInt(0,100);
-            System.out.println(randig);
-            out.println("READY");
-
-
-            while ((input = in.readLine()) != null) {
-               int guess = recSanityCheck(in,out,input);
-
-                if(guess == randig){
-                    out.println("You have guessed correct");
-                    return 0;
-                }else if(guess <randig){
-                    out.println("LOW");
-                }else if(guess >randig){
-                    out.println("HIGH");
-
-                }
-
-                /*System.out.println("Server: " + input);
-                out.println(input);
-
-                if (input.equals("Bye."))
-                    break;*/
-            }
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
+        }else{//else
+            out= "NOPE";
         }
-        return -4;
+        System.out.println("out=["+out+"]");
+        return out;
     }
 
-    private int recSanityCheck(BufferedReader in,PrintWriter out,String input ) throws IOException ,NullPointerException{
-        int guess = -1;
-        try{
-            if(!input.substring(0, 6).equals("GUESS ")){
-                throw new StringIndexOutOfBoundsException();
-            }
-                guess=Integer.parseInt(input.substring(6));
-                System.out.println("Part 6: " + guess);
-                return guess;
 
-        }catch (StringIndexOutOfBoundsException | NumberFormatException e1){
-            out.println("You have to write GUESS x");
-            return  recSanityCheck(in,out,in.readLine());
-        }
-    }
-//TODO: avsluta socketen
+
 }
